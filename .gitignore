@@ -1,0 +1,18 @@
+# python bytecode
+__pycache__/
+*.py[cod]
+
+# virtual environments
+.venv/
+venv/
+env/
+
+# local secrets and editor folders
+.env
+.idea/
+.vscode/
+
+# test and tool caches
+.pytest_cache/
+.coverage
+htmlcov/
