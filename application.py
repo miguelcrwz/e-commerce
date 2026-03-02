@@ -26,6 +26,18 @@ def add_product():
         return jsonify({"message" : "Product registered successfully."})
     return jsonify({"message" : "Invalid product data."}), 400
 
+@application.route("/api/products/<int:product_id>", methods = ["GET"])
+def get_products_details(product_id):
+    product = Product.query.get(product_id)
+    if product:
+        return jsonify({
+            "id" : product.id,
+            "name" : product.name,
+            "price" : product.price,
+            "description" : product.description
+        })
+    return jsonify({"message" : "Product not found."}), 404
+
 @application.route("/api/products", methods = ["GET"])
 def get_products():
     products = Product.query.all()
