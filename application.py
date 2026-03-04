@@ -46,6 +46,7 @@ def logout():
     return jsonify({"message" : "Logout successfully."})
 
 @application.route("/api/products/add", methods = ["POST"])
+@login_required
 def add_product():
     data = request.json
     if "name" in data and "price" in data:
@@ -56,6 +57,7 @@ def add_product():
     return jsonify({"message" : "Invalid product data."}), 400
 
 @application.route("/api/products/delete/<int:product_id>", methods = ["DELETE"])
+@login_required
 def delete_products(product_id):
     product = Product.query.get(product_id)
     if product:
@@ -77,6 +79,7 @@ def get_products_details(product_id):
     return jsonify({"message" : "Product not found."}), 404
 
 @application.route("/api/products/update/<int:product_id>", methods = ["PUT"])
+@login_required
 def update_products(product_id):
     product = Product.query.get(product_id)
     if not product: 
