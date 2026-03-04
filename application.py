@@ -26,6 +26,15 @@ def add_product():
         return jsonify({"message" : "Product registered successfully."})
     return jsonify({"message" : "Invalid product data."}), 400
 
+@application.route("/api/products/delete/<int:product_id>", methods = ["DELETE"])
+def delete_products(product_id):
+    product = Product.query.get(product_id)
+    if product:
+        db.session.delete(product)
+        db.session.commit()
+        return jsonify({"message" : "Product deleted successfully."})
+    return jsonify({"message" : "Product not found."}), 404
+
 @application.route("/api/products/<int:product_id>", methods = ["GET"])
 def get_products_details(product_id):
     product = Product.query.get(product_id)
@@ -37,6 +46,21 @@ def get_products_details(product_id):
             "description" : product.description
         })
     return jsonify({"message" : "Product not found."}), 404
+
+@application.route("/api/products/update/<int:product_id>", methods = ["PUT"])
+def update_products(product_id):
+    product = Product.query.get(product_id)
+    if not product: 
+        return jsonify({"message" : "Product not found."}), 404
+    data = request.json
+    if "name" in data:
+        product.name = data["name"]
+    if "price" in data: 
+        product.price = data["price"]
+    if "description" in data:
+        product.description = data["description"]
+    db.session.commit()
+    return jsonify({"message" : "Product updated successfully."})
 
 @application.route("/api/products", methods = ["GET"])
 def get_products():
