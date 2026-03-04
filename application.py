@@ -1,10 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 application = Flask(__name__)
+application.config["SECRET_KEY"] = "miguelcrwz"
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///e-commerce.db"
 
+login_manager = LoginManager()
 db = SQLAlchemy(application)
+login_manager.init_application(application)
+login_manager.login_view = "login"
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(80), nullable = False, unique = True)
+    password = db.Column(db.String(80), nullable = True)
 
 class Product (db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -12,9 +22,28 @@ class Product (db.Model):
     price = db.Column(db.Float, nullable = False)
     description = db.Column(db.Text, nullable = True)
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 @application.route("/") 
 def initial():
     return "API UP"
+
+@application.route("/login", methods = ["POST"])
+def login():
+    data = request.json
+    user = User.query.filter_by(username = data.get("username")).first()
+    if user and data.get("password") == user.password:
+        login_user(user)
+        return jsonify({"message" : "Logged in successfully."})
+    return jsonify({"message" : "Unauthorized. Invalid credentials."}), 401
+
+@application.route("/logout", methods = ["POST"])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({"message" : "Logout successfully."})
 
 @application.route("/api/products/add", methods = ["POST"])
 def add_product():
