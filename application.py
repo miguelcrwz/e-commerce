@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 application = Flask(__name__)
@@ -10,6 +11,7 @@ login_manager = LoginManager()
 db = SQLAlchemy(application)
 login_manager.init_application(application)
 login_manager.login_view = "login"
+CORS(application)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
