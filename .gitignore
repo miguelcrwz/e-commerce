@@ -16,3 +16,6 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# cookie jar left by the curl examples in the readme
+cookies.txt
